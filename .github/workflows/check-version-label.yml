@@ -1,0 +1,20 @@
+name: Require version label
+
+on:
+  pull_request:
+    types: [opened, synchronize, labeled, unlabeled]
+    branches: [master]
+
+jobs:
+  check-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for version label
+        run: |
+          labels='${{ toJson(github.event.pull_request.labels.*.name) }}'
+          if echo "$labels" | grep -qE '"(patch|minor|major)"'; then
+            echo "Version label found."
+          else
+            echo "PR must have a 'patch', 'minor', or 'major' label."
+            exit 1
+          fi
