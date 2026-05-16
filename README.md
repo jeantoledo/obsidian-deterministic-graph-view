@@ -18,14 +18,12 @@ This plugin trades some of the "organic" look for **predictable, reproducible** 
 
 - Deterministic `breadthfirst` graph layout (Cytoscape).
 - Click a node to open the corresponding note in a new tab.
-- Hover highlight on nodes.
+- Hover highlight on nodes (darkened background + pointer cursor).
 - Auto-refreshes when files are created, deleted, or renamed.
-- Respects Obsidian's **Files & links → Excluded files** (`userIgnoreFilters`).
+- Refits the graph when the view becomes active again.
+- Respects Obsidian's **Files & links → Excluded files** (`userIgnoreFilters`) and re-renders when they change.
 - Customizable node and edge colors via the settings tab.
-- Ribbon icons:
-  - **Network** — open the deterministic graph view in a new tab.
-  - **Settings** — open Obsidian settings.
-  - **Refresh** — reload the Obsidian app.
+- Single **network** ribbon icon to open the graph in a new tab.
 
 ## Installation
 
@@ -54,7 +52,7 @@ Then copy `main.js`, `manifest.json`, and `styles.css` into `<Vault>/.obsidian/p
 
 Click the **network** ribbon icon to open the graph in a new tab. Click any node to open the corresponding note.
 
-The graph rebuilds automatically when notes are created, deleted, or renamed, and when you change Obsidian's excluded-files filters.
+The graph rebuilds automatically when notes are created, deleted, or renamed, and when you change Obsidian's excluded-files filters. When the view leaf becomes active again, the graph is refit to the container.
 
 ## Settings
 
@@ -64,7 +62,7 @@ The graph rebuilds automatically when notes are created, deleted, or renamed, an
 - **Node text color**
 - **Edge color**
 
-Defaults use a "Midnight Navy / Soft Light Gray / Slate Teal" palette.
+Defaults use a "Deep Ocean Blue / Soft Light Gray / Slate Teal" palette (see `src/constants.ts`).
 
 > Note: settings changes apply on the next render (e.g. after creating/renaming a note, or reopening the view).
 
@@ -85,11 +83,14 @@ For local testing, symlink or copy this folder into `<Vault>/.obsidian/plugins/d
 
 ```
 src/
-  main.ts                              # plugin lifecycle
-  DeterministicGraphRenderView.ts      # view + graph rendering (Cytoscape)
-  DeterministicGraphViewSettingTab.ts  # settings UI + defaults
+  main.ts            # plugin lifecycle: load settings, register view + setting tab, ribbon icon
+  PluginView.ts      # ItemView wrapper: lifecycle, vault/workspace events, render scheduling
+  GraphRenderer.ts   # Cytoscape instance, graph build, styling, node interactions
+  SettingTab.ts      # color-picker based settings UI
+  constants.ts       # default settings + color palette
+  utils.ts           # small helpers (e.g. darkenHexColor)
 types/
-  App.ts                               # Obsidian App typing extensions
+  PluginSettings.ts  # PluginSettings interface (node + edge colors)
 ```
 
 ## License
