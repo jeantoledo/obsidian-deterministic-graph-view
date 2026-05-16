@@ -1,5 +1,7 @@
 # Deterministic Graph View
 
+[![Build and Lint](https://github.com/jeantoledo/obsidian-deterministic-graph-view/actions/workflows/lint.yml/badge.svg)](https://github.com/jeantoledo/obsidian-deterministic-graph-view/actions/workflows/lint.yml)
+
 An [Obsidian](https://obsidian.md) plugin that renders your vault's link graph with a **deterministic layout**. Unlike Obsidian's built-in graph view (which uses a force-directed simulation and rearranges itself every time you open it), this plugin produces the **same layout on every render** for the same set of notes and links.
 
 Built on top of [Cytoscape.js](https://js.cytoscape.org/) using a `breadthfirst` layout.
