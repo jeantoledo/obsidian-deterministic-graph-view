@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: npm ci
+
+      - name: Get bump type from label
+        id: bump
+        run: |
+          labels='${{ toJson(github.event.pull_request.labels.*.name) }}'
+          if echo "$labels" | grep -q '"major"'; then
+            echo "type=major" >> $GITHUB_OUTPUT
+          elif echo "$labels" | grep -q '"minor"'; then
+            echo "type=minor" >> $GITHUB_OUTPUT
+          elif echo "$labels" | grep -q '"patch"'; then
+            echo "type=patch" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version
+        run: npm version ${{ steps.bump.outputs.type }} --tag-version-prefix=""
+
+      - name: Push version commit and tag
+        run: git push origin master --follow-tags
+
+      - name: Read version
+        id: version
+        run: echo "version=$(jq -r .version manifest.json)" >> $GITHUB_OUTPUT
+
+      - run: npm run build
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.version }}
+          files: |
+            main.js
+            manifest.json
+            styles.css
