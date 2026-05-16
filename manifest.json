@@ -1,7 +1,7 @@
 {
 	"id": "deterministic-graph-view",
 	"name": "Deterministic Graph View",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"minAppVersion": "0.15.0",
 	"description": "A deterministic graph view for Obsidian.",
 	"author": "Obsidian",
