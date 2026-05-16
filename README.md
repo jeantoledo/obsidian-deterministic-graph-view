@@ -1,90 +1,97 @@
-# Obsidian Sample Plugin
+# Deterministic Graph View
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+An [Obsidian](https://obsidian.md) plugin that renders your vault's link graph with a **deterministic layout**. Unlike Obsidian's built-in graph view (which uses a force-directed simulation and rearranges itself every time you open it), this plugin produces the **same layout on every render** for the same set of notes and links.
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+Built on top of [Cytoscape.js](https://js.cytoscape.org/) using a `breadthfirst` layout.
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and output 'click' to the console.
-- Registers a global interval which logs 'setInterval' to the console.
+## Why
 
-## First time developing plugins?
+The default graph view is great for exploring, but the positions of nodes shift every time you reopen it. That makes it hard to:
 
-Quick starting guide for new plugin devs:
+- Build a mental map of your vault.
+- Compare the graph across sessions.
+- Use the graph as a stable visual index of your notes.
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
-- Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+This plugin trades some of the "organic" look for **predictable, reproducible** node placement.
 
-## Releasing new releases
+## Features
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+- Deterministic `breadthfirst` graph layout (Cytoscape).
+- Click a node to open the corresponding note in a new tab.
+- Hover highlight on nodes.
+- Auto-refreshes when files are created, deleted, or renamed.
+- Respects Obsidian's **Files & links → Excluded files** (`userIgnoreFilters`).
+- Customizable node and edge colors via the settings tab.
+- Ribbon icons:
+  - **Network** — open the deterministic graph view in a new tab.
+  - **Settings** — open Obsidian settings.
+  - **Refresh** — reload the Obsidian app.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+## Installation
 
-## Adding your plugin to the community plugin list
+### Manual
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
+1. Download `main.js`, `manifest.json`, and `styles.css` from the latest [release](https://github.com/jeantoledo/obsidian-deterministic-graph-view/releases).
+2. Copy them into your vault under:
+   ```
+   <Vault>/.obsidian/plugins/deterministic-graph-view/
+   ```
+3. Reload Obsidian.
+4. Enable **Deterministic Graph View** under **Settings → Community plugins**.
 
-## How to use
+### From source
 
-- Clone this repo.
-- Make sure your NodeJS is at least v16 (`node --version`).
-- `npm i` or `yarn` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code. 
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-    "fundingUrl": "https://buymeacoffee.com"
-}
+```bash
+git clone https://github.com/jeantoledo/obsidian-deterministic-graph-view.git
+cd obsidian-deterministic-graph-view
+npm install
+npm run build
 ```
 
-If you have multiple URLs, you can also do:
+Then copy `main.js`, `manifest.json`, and `styles.css` into `<Vault>/.obsidian/plugins/deterministic-graph-view/`.
 
-```json
-{
-    "fundingUrl": {
-        "Buy Me a Coffee": "https://buymeacoffee.com",
-        "GitHub Sponsor": "https://github.com/sponsors",
-        "Patreon": "https://www.patreon.com/"
-    }
-}
+## Usage
+
+Click the **network** ribbon icon to open the graph in a new tab. Click any node to open the corresponding note.
+
+The graph rebuilds automatically when notes are created, deleted, or renamed, and when you change Obsidian's excluded-files filters.
+
+## Settings
+
+**Settings → Deterministic Graph View** exposes:
+
+- **Node background color**
+- **Node text color**
+- **Edge color**
+
+Defaults use a "Midnight Navy / Soft Light Gray / Slate Teal" palette.
+
+> Note: settings changes apply on the next render (e.g. after creating/renaming a note, or reopening the view).
+
+## Development
+
+Requirements: Node 18+ and npm.
+
+```bash
+npm install
+npm run dev       # esbuild watch mode
+npm run build     # type-check + production build
+npm run lint      # eslint
 ```
 
-## API Documentation
+For local testing, symlink or copy this folder into `<Vault>/.obsidian/plugins/deterministic-graph-view/` and run `npm run dev`. Reload Obsidian to pick up changes.
 
-See https://docs.obsidian.md
+### Project layout
+
+```
+src/
+  main.ts                              # plugin lifecycle
+  DeterministicGraphRenderView.ts      # view + graph rendering (Cytoscape)
+  DeterministicGraphViewSettingTab.ts  # settings UI + defaults
+types/
+  App.ts                               # Obsidian App typing extensions
+```
+
+## License
+
+[0BSD](LICENSE)
