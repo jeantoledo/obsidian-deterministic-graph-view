@@ -13,8 +13,16 @@ jobs:
       contents: write
 
     steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
+          token: ${{ steps.app-token.outputs.token }}
           fetch-depth: 0
 
       - uses: actions/setup-node@v4
@@ -37,8 +45,8 @@ jobs:
 
       - name: Configure git
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "jeantoledo-version-bump-bot[bot]"
+          git config user.email "jeantoledo-version-bump-bot[bot]@users.noreply.github.com"
 
       - name: Bump version
         run: npm version ${{ steps.bump.outputs.type }} --tag-version-prefix=""
