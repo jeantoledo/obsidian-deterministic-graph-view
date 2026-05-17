@@ -1,5 +1,5 @@
 import { TFile } from "obsidian";
-import cytoscape, { Core, NodeSingular } from "cytoscape";
+import cytoscape, { BoundingBox12, Core, NodeSingular } from "cytoscape";
 import DeterministicGraphViewPlugin from "main";
 import { darkenHexColor } from "./utils";
 
@@ -66,7 +66,7 @@ class GraphRenderer {
 						label: "data(label)",
 						"z-index": 10,
 						"text-wrap": "wrap",
-						"text-max-width": "60px",
+						"text-max-width": "50px",
 						"min-zoomed-font-size": 8,
 						"font-size": 5,
 						"text-valign": "bottom",
@@ -91,20 +91,58 @@ class GraphRenderer {
 					},
 				},
 			],
-			layout: {
-				name: "breadthfirst",
-				spacingFactor: 0.2,
-				directed: true,
-				animate: true,
-				nodeDimensionsIncludeLabels: true,
-				//name: "cose",
-				//randomize: false,
-			},
+			layout: { name: "preset" },
 		});
 
+		this.runLayoutWithAutoSpacing();
 		this.registerNodeClickEvents();
 		this.registerNodeHoverEvents();
 		this.fit();
+	}
+
+	private runLayoutWithAutoSpacing(): void {
+		const cy = this.cy;
+		if (!cy) return;
+
+		const base = 0.2;
+		const growth = 1.4;
+		const maxIterations = 8;
+		let spacingFactor = base;
+
+		for (let i = 0; i < maxIterations; i++) {
+			cy.layout({
+				name: "breadthfirst",
+				spacingFactor,
+				directed: true,
+				avoidOverlap: true,
+				animate: false,
+				nodeDimensionsIncludeLabels: true,
+			}).run();
+
+			if (!this.hasLabelOverlap()) return;
+			spacingFactor *= growth;
+		}
+	}
+
+	private hasLabelOverlap(): boolean {
+		const cy = this.cy;
+		if (!cy) return false;
+
+		const boxes: BoundingBox12[] = cy.nodes().map((n) =>
+			n.boundingBox({ includeLabels: true, includeOverlays: false }),
+		);
+		for (let i = 0; i < boxes.length; i++) {
+			const a = boxes[i];
+			if (!a) continue;
+			for (let j = i + 1; j < boxes.length; j++) {
+				const b = boxes[j];
+				if (!b) continue;
+				if (a.x2 > b.x1 && b.x2 > a.x1 && a.y2 > b.y1 && b.y2 > a.y1) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	fit(): void {
