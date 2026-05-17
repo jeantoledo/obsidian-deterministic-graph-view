@@ -1,6 +1,7 @@
-import { ItemView, WorkspaceLeaf } from "obsidian";
+import { ItemView, WorkspaceLeaf, debounce } from "obsidian";
 import DeterministicGraphViewPlugin from "main";
 import GraphRenderer from "./GraphRenderer";
+import { EVENTS } from './constants';
 
 export const VIEW_TYPE = "deterministic-graph-view";
 
@@ -62,6 +63,8 @@ class PluginView extends ItemView {
 				this.scheduleRenderGraph();
 			}
 		}));
+		const onSettingsChanged = debounce(() => this.scheduleRenderGraph(), 250, true);
+		this.registerEvent(this.plugin.events.on(EVENTS.SETTINGS_CHANGED, onSettingsChanged));
 	}
 
 	private scheduleRenderGraph() {
