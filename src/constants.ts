@@ -15,3 +15,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
 		color: COLORS.SLATE_TEAL,
 	},
 }
+
+export const EVENTS = {
+	SETTINGS_CHANGED: "settings-changed",
+}
