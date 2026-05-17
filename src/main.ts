@@ -1,11 +1,13 @@
-import { Plugin } from 'obsidian';
+import { Events, Plugin } from 'obsidian';
 import { DEFAULT_SETTINGS } from "./constants";
 import PluginView from './PluginView';
 import PluginSettings from '../types/PluginSettings';
 import SettingTab from './SettingTab';
+import { EVENTS } from './constants';
 
 export default class DeterministicGraphViewPlugin extends Plugin {
 	settings: PluginSettings;
+	readonly events = new Events();
 
 	async onload() {
 		await this.loadSettings();
@@ -22,6 +24,7 @@ export default class DeterministicGraphViewPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+		this.events.trigger(EVENTS.SETTINGS_CHANGED);
 	}
 }
 
