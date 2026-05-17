@@ -3,8 +3,8 @@
 	"name": "Deterministic Graph View",
 	"version": "0.1.0",
 	"minAppVersion": "0.15.0",
-	"description": "A deterministic graph view for Obsidian.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
+	"description": "A deterministic graph view alternative to Obsidian's built-in graph view.",
+	"author": "Jean Toledo",
+	"authorUrl": "https://github.com/jeantoledo",
 	"isDesktopOnly": false
 }
