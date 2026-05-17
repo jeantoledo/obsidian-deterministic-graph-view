@@ -1,7 +1,7 @@
 {
 	"id": "deterministic-graph-view",
 	"name": "Deterministic Graph View",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"minAppVersion": "0.15.0",
 	"description": "A deterministic graph view alternative.",
 	"author": "Jean Toledo",
