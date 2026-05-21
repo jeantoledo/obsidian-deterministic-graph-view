@@ -54,11 +54,21 @@ class PluginView extends ItemView {
 	}
 
 	private registerEvents() {
-		this.registerEvent(this.plugin.app.vault.on("create", () => this.scheduleRenderGraph()));
-		this.registerEvent(this.plugin.app.vault.on("delete", () => this.scheduleRenderGraph()));
-		this.registerEvent(this.plugin.app.vault.on("rename", () => this.scheduleRenderGraph()));
-		this.registerEvent(this.plugin.app.workspace.on("active-leaf-change", () => this.refreshVisibleGraph()));
-		this.registerEvent(this.plugin.app.vault.on("config-changed", (key) => {
+		const { app } = this.plugin;
+
+		this.registerEvent(app.vault.on("create", () => this.scheduleRenderGraph()));
+		this.registerEvent(app.vault.on("delete", () => this.scheduleRenderGraph()));
+		this.registerEvent(app.vault.on("rename", () => this.scheduleRenderGraph()));
+
+		// Listen to metadata cache events to ensure graph edges update as links resolve.
+		// 'resolved' triggers after all files are indexed; 'changed' triggers on per-file link changes.
+		// This prevents the initial graph from missing connections.
+		const onMetadataChanged = debounce(() => this.scheduleRenderGraph(), 250, true);
+		this.registerEvent(app.metadataCache.on("resolved", () => this.scheduleRenderGraph()));
+		this.registerEvent(app.metadataCache.on("changed", () => onMetadataChanged()));
+
+		this.registerEvent(app.workspace.on("active-leaf-change", () => this.refreshVisibleGraph()));
+		this.registerEvent(app.vault.on("config-changed", (key) => {
 			if (key === "userIgnoreFilters") {
 				this.scheduleRenderGraph();
 			}
