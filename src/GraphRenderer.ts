@@ -94,7 +94,7 @@ class GraphRenderer {
 
 		this.runLayoutWithAutoSpacing();
 		this.registerNodeClickEvents();
-		this.registerNodeHoverEvents();
+		this.registerNodeHoverEvents(settings);
 		this.fit();
 	}
 
@@ -171,9 +171,7 @@ class GraphRenderer {
 		});
 	}
 
-	private registerNodeHoverEvents() {
-		const settings = this.plugin.settingsManager.getEffectiveSettings();
-
+	private registerNodeHoverEvents(settings: ReturnType<typeof this.plugin.settingsManager.getEffectiveSettings>) {
 		this.cy?.on("mouseover", "node", (event) => {
 			const node = event.target as NodeSingular;
 			node.style({
