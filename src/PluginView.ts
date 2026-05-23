@@ -75,6 +75,7 @@ class PluginView extends ItemView {
 		}));
 		const onSettingsChanged = debounce(() => this.scheduleRenderGraph(), 250, true);
 		this.registerEvent(this.plugin.events.on(EVENTS.SETTINGS_CHANGED, onSettingsChanged));
+		this.registerEvent(app.workspace.on('css-change', () => this.scheduleRenderGraph()));
 	}
 
 	private scheduleRenderGraph() {
