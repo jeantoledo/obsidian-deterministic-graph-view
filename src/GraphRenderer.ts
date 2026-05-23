@@ -28,7 +28,7 @@ class GraphRenderer {
 	render(): void {
 		if (!this.hasVisibleContainer()) return;
 
-		const { settings } = this.plugin;
+		const settings = this.plugin.settingsManager.getEffectiveSettings();
 
 		this.cy?.destroy();
 		this.container.empty();
@@ -71,8 +71,6 @@ class GraphRenderer {
 						"font-size": 5,
 						"text-valign": "bottom",
 						"text-halign": "center",
-						"text-outline-width": 0.1,
-						"text-outline-color": "black",
 						"background-color": settings.node.backgroundColor,
 						"color": settings.node.textColor,
 						"width": 5,
@@ -174,7 +172,7 @@ class GraphRenderer {
 	}
 
 	private registerNodeHoverEvents() {
-		const { settings } = this.plugin;
+		const settings = this.plugin.settingsManager.getEffectiveSettings();
 
 		this.cy?.on("mouseover", "node", (event) => {
 			const node = event.target as NodeSingular;
