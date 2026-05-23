@@ -184,22 +184,17 @@ class GraphRenderer {
 	private registerNodeHoverEvents(settings: ReturnType<typeof this.plugin.settingsManager.getEffectiveSettings>) {
 		this.cy?.on("mouseover", "node", (event) => {
 			const node = event.target as NodeSingular;
-			node.style({
-				"background-color": this.getGraphNodeFocusedColor(),
-			});
-			this.cursorTarget?.setCssProps({
-				cursor: "pointer",
-			});
+			const focusColor = this.getGraphNodeFocusedColor();
+			node.style({ "background-color": focusColor });
+			node.connectedEdges().style({ "line-color": focusColor });
+			this.cursorTarget?.setCssProps({ cursor: "pointer" });
 		});
 
 		this.cy?.on("mouseout", "node", (event) => {
 			const node = event.target as NodeSingular;
-			node.style({
-				"background-color": settings.node.backgroundColor,
-			});
-			this.cursorTarget?.setCssProps({
-				cursor: "default",
-			});
+			node.style({ "background-color": settings.node.backgroundColor });
+			node.connectedEdges().style({ "line-color": settings.edge.color });
+			this.cursorTarget?.setCssProps({ cursor: "default" });
 		});
 	}
 
