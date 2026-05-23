@@ -16,6 +16,12 @@ export default class DeterministicGraphViewPlugin extends Plugin {
 		SettingTab.register(this);
 
 		this.addRibbonIcon('network', 'Open deterministic graph view', () => PluginView.open(this));
+
+		this.addCommand({
+			id: 'open-graph-view',
+			name: 'Open graph view',
+			callback: () => PluginView.open(this),
+		});
 	}
 
 	async loadSettings() {
