@@ -1,7 +1,6 @@
 import { TFile } from "obsidian";
 import cytoscape, { BoundingBox12, Core, NodeSingular } from "cytoscape";
 import DeterministicGraphViewPlugin from "main";
-import { darkenHexColor } from "./utils";
 
 export interface GraphRendererOptions {
 	plugin: DeterministicGraphViewPlugin;
@@ -171,11 +170,22 @@ class GraphRenderer {
 		});
 	}
 
+	private getGraphNodeFocusedColor(): string {
+		const temp = document.createElement("div");
+		document.body.appendChild(temp);
+		temp.setCssProps({
+			color: "var(--graph-node-focused)",
+		});
+		const color = getComputedStyle(temp).color;
+		temp.remove();
+		return color;
+	}
+
 	private registerNodeHoverEvents(settings: ReturnType<typeof this.plugin.settingsManager.getEffectiveSettings>) {
 		this.cy?.on("mouseover", "node", (event) => {
 			const node = event.target as NodeSingular;
 			node.style({
-				"background-color": darkenHexColor(settings.node.backgroundColor),
+				"background-color": this.getGraphNodeFocusedColor(),
 			});
 			this.cursorTarget?.setCssProps({
 				cursor: "pointer",
