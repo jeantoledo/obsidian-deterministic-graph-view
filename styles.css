@@ -1,8 +1,220 @@
-/*
+/* ─── Graph wrapper ─────────────────────────────────────────────────────── */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.dgv-graph-wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
 
-If your plugin does not need CSS, delete this file.
+.dgv-cy-container {
+	width: 100%;
+	height: 100%;
+}
 
-*/
+/* ─── Gear / settings toggle button ────────────────────────────────────── */
+
+.dgv-controls-btn {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: none;
+	border-radius: 6px;
+	background: transparent;
+	cursor: pointer;
+	color: var(--text-muted);
+	transition: background 0.15s ease, color 0.15s ease;
+}
+
+.dgv-controls-btn:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.dgv-controls-btn svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* ─── Controls panel ────────────────────────────────────────────────────── */
+
+.dgv-controls-panel {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 200;
+	min-width: 275px;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+	overflow: hidden;
+}
+
+/* ─── Inline section action buttons (reset, close) ─────────────────────── */
+
+.dgv-section-header-spacer {
+	flex: 1;
+}
+
+.dgv-section-action-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	padding: 0;
+	border: none;
+	border-radius: 4px;
+	background: transparent;
+	cursor: pointer;
+	color: var(--text-muted);
+	transition: background 0.12s ease, color 0.12s ease;
+	flex-shrink: 0;
+}
+
+.dgv-section-action-btn:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.dgv-section-action-btn svg {
+	width: 13px;
+	height: 13px;
+}
+
+/* ─── Expandable sections ───────────────────────────────────────────────── */
+
+.dgv-controls-section {
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.dgv-controls-section:last-child {
+	border-bottom: none;
+}
+
+.dgv-section-header {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 10px 12px;
+	cursor: pointer;
+	user-select: none;
+	transition: background 0.12s ease;
+}
+
+.dgv-section-header:hover {
+	background: var(--background-modifier-hover);
+}
+
+.dgv-section-chevron {
+	display: flex;
+	align-items: center;
+	color: var(--text-muted);
+	flex-shrink: 0;
+	transition: transform 0.15s ease;
+}
+
+.dgv-section-chevron svg {
+	width: 14px;
+	height: 14px;
+}
+
+.dgv-section-title {
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+}
+
+.dgv-section-content {
+	padding: 8px 12px 12px;
+	background: var(--background-primary);
+}
+
+.dgv-section-placeholder {
+	margin: 0;
+	font-size: var(--font-ui-smaller);
+	color: var(--text-faint);
+	font-style: italic;
+}
+
+/* ─── Search input ──────────────────────────────────────────────────────── */
+
+.dgv-search-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 8px;
+	background: var(--background-modifier-form-field);
+	border-radius: 6px;
+}
+
+.dgv-search-icon {
+	display: flex;
+	align-items: center;
+	color: var(--text-muted);
+	flex-shrink: 0;
+}
+
+.dgv-search-icon svg {
+	width: 13px;
+	height: 13px;
+}
+
+.dgv-search-wrapper input {
+	flex: 1;
+	min-width: 0;
+	border: none !important;
+	background: transparent;
+	outline: none;
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+	padding: 0;
+}
+
+.dgv-search-wrapper input::placeholder {
+	color: var(--text-faint);
+}
+
+.dgv-search-wrapper input:focus {
+	box-shadow: none !important;
+}
+
+/* Solid filled circle, no visible button chrome — matches Obsidian's native clear button */
+.dgv-search-clear {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	min-width: 18px;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	background: var(--text-muted);
+	cursor: pointer;
+	color: var(--background-primary);
+	flex-shrink: 0;
+	box-shadow: none;
+}
+
+.dgv-search-clear:hover {
+	background: var(--text-normal);
+	color: var(--background-primary);
+}
+
+.dgv-search-clear svg {
+	width: 10px;
+	height: 10px;
+}
+
+/* ─── Utility ───────────────────────────────────────────────────────────── */
+
+.dgv-hidden {
+	display: none !important;
+}

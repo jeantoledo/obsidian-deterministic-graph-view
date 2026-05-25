@@ -1,6 +1,7 @@
-import { ItemView, WorkspaceLeaf, debounce } from "obsidian";
+import { ItemView, WorkspaceLeaf, debounce, setIcon } from "obsidian";
 import DeterministicGraphViewPlugin from "main";
 import GraphRenderer from "./GraphRenderer";
+import GraphControlsPanel from "./GraphControlsPanel";
 import { EVENTS } from './constants';
 
 export const VIEW_TYPE = "deterministic-graph-view";
@@ -8,6 +9,7 @@ export const VIEW_TYPE = "deterministic-graph-view";
 class PluginView extends ItemView {
 	plugin: DeterministicGraphViewPlugin;
 	private renderer: GraphRenderer | null = null;
+	private controlsPanel: GraphControlsPanel | null = null;
 	private needsRender = false;
 
 	constructor(leaf: WorkspaceLeaf, plugin: DeterministicGraphViewPlugin) {
@@ -34,13 +36,25 @@ class PluginView extends ItemView {
 	}
 
 	async onOpen() {
-		const container = this.containerEl.children[1];
-		if (!container) return;
+		const viewContent = this.containerEl.children[1] as HTMLElement;
+		if (!viewContent) return;
+
+		// Wrapper gives GraphRenderer and overlay elements a shared positioning context
+		const wrapper = viewContent.createDiv({ cls: "dgv-graph-wrapper" });
 
 		this.renderer = new GraphRenderer({
 			plugin: this.plugin,
-			container,
+			container: wrapper,
 			cursorTarget: this.containerEl,
+		});
+
+		const settingsBtn = wrapper.createEl("button", { cls: "dgv-controls-btn" });
+		settingsBtn.addEventListener("click", () => this.controlsPanel?.toggle());
+		setIcon(settingsBtn, "settings");
+
+		// Controls panel (starts hidden; lives as a sibling of the cy container)
+		this.controlsPanel = new GraphControlsPanel(wrapper, {
+			onFilterChange: (query) => this.renderer?.setFilter(query),
 		});
 
 		this.registerEvents();
@@ -48,6 +62,8 @@ class PluginView extends ItemView {
 	}
 
 	async onClose() {
+		this.controlsPanel?.destroy();
+		this.controlsPanel = null;
 		this.renderer?.destroy();
 		this.renderer = null;
 		this.needsRender = false;
