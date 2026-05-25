@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-deterministic-graph-view",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"description": "This is a deterministic graph view plugin for Obsidian (https://obsidian.md)",
 	"main": "main.js",
 	"type": "module",
