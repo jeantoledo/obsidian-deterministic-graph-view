@@ -10,6 +10,8 @@ export interface GraphRendererOptions {
 
 class GraphRenderer {
 	private cy: Core | null = null;
+	private graphEl: HTMLElement | null = null;
+	private currentFilter = "";
 	private readonly plugin: DeterministicGraphViewPlugin;
 	private readonly container: Element;
 	private readonly cursorTarget?: HTMLElement;
@@ -30,9 +32,11 @@ class GraphRenderer {
 		const settings = this.plugin.settingsManager.getEffectiveSettings();
 
 		this.cy?.destroy();
-		this.container.empty();
 
-		const el = this.container.createDiv();
+		// Remove only the previous cytoscape div, leaving sibling elements (controls, buttons) intact
+		this.graphEl?.remove();
+		this.graphEl = this.container.createDiv({ cls: "dgv-cy-container" });
+		const el = this.graphEl;
 		el.setCssProps({
 			width: "100%",
 			height: "100%",
@@ -94,7 +98,42 @@ class GraphRenderer {
 		this.runLayoutWithAutoSpacing();
 		this.registerNodeClickEvents();
 		this.registerNodeHoverEvents(settings);
+		this.applyFilter();
 		this.fit();
+	}
+
+	/** Called by the controls panel whenever the search query changes. */
+	setFilter(query: string): void {
+		this.currentFilter = query;
+		this.applyFilter();
+		this.fit();
+	}
+
+	private applyFilter(): void {
+		const cy = this.cy;
+		if (!cy) return;
+
+		const q = this.currentFilter.trim().toLowerCase();
+
+		if (!q) {
+			cy.elements().style("display", "element");
+			return;
+		}
+
+		// Nodes whose label contains the query string
+		const matched = cy.nodes().filter((n) =>
+			(n.data("label") as string).toLowerCase().includes(q),
+		);
+
+		const neighbourNodes = matched.neighborhood().nodes();
+		const visibleNodes = matched.union(neighbourNodes);
+		const visibleEdges = visibleNodes
+			.connectedEdges()
+			.filter((e) => visibleNodes.has(e.source()) && visibleNodes.has(e.target()));
+
+		// Hide everything, then reveal the matching subgraph
+		cy.elements().style("display", "none");
+		visibleNodes.union(visibleEdges).style("display", "element");
 	}
 
 	private runLayoutWithAutoSpacing(): void {
@@ -148,13 +187,19 @@ class GraphRenderer {
 			if (!cy || !this.hasVisibleContainer()) return;
 
 			cy.resize();
-			cy.fit(cy.elements(), 24);
+			// Fit to only the displayed elements so a filter zooms to the result set
+			const displayed = cy.elements().filter(
+				(el) => el.style("display") !== "none",
+			);
+			cy.fit(displayed.length > 0 ? displayed : cy.elements(), 24);
 		});
 	}
 
 	destroy(): void {
 		this.cy?.destroy();
 		this.cy = null;
+		this.graphEl?.remove();
+		this.graphEl = null;
 	}
 
 	private registerNodeClickEvents() {
@@ -186,14 +231,14 @@ class GraphRenderer {
 			const node = event.target as NodeSingular;
 			const focusColor = this.getGraphNodeFocusedColor();
 			node.style({ "background-color": focusColor });
-			node.connectedEdges().style({ "line-color": focusColor });
+			node.connectedEdges().filter(":visible").style({ "line-color": focusColor });
 			this.cursorTarget?.setCssProps({ cursor: "pointer" });
 		});
 
 		this.cy?.on("mouseout", "node", (event) => {
 			const node = event.target as NodeSingular;
 			node.style({ "background-color": settings.node.backgroundColor });
-			node.connectedEdges().style({ "line-color": settings.edge.color });
+			node.connectedEdges().filter(":visible").style({ "line-color": settings.edge.color });
 			this.cursorTarget?.setCssProps({ cursor: "default" });
 		});
 	}
