@@ -213,6 +213,48 @@
 	height: 10px;
 }
 
+/* ─── Display section color rows ────────────────────────────────────────── */
+
+.dgv-color-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 5px 0;
+}
+
+.dgv-color-row + .dgv-color-row {
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.dgv-color-label {
+	font-size: var(--font-ui-small);
+	color: var(--text-normal);
+}
+
+.dgv-display-footer {
+	display: flex;
+	justify-content: flex-end;
+	padding-top: 8px;
+	margin-top: 4px;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.dgv-reset-btn {
+	font-size: var(--font-ui-smaller);
+	color: var(--text-muted);
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 2px 6px;
+	border-radius: 4px;
+	transition: color 0.12s ease, background 0.12s ease;
+}
+
+.dgv-reset-btn:hover {
+	color: var(--text-normal);
+	background: var(--background-modifier-hover);
+}
+
 /* ─── Utility ───────────────────────────────────────────────────────────── */
 
 .dgv-hidden {

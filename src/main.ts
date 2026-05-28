@@ -1,6 +1,5 @@
 import { Events, Plugin } from 'obsidian';
 import PluginView from './PluginView';
-import SettingTab from './SettingTab';
 import SettingsManager from './SettingsManager';
 
 export default class DeterministicGraphViewPlugin extends Plugin {
@@ -14,7 +13,6 @@ export default class DeterministicGraphViewPlugin extends Plugin {
 		await this.settingsManager.load();
 
 		PluginView.register(this);
-		SettingTab.register(this);
 
 		this.addRibbonIcon('network', 'Open deterministic graph view', () => PluginView.open(this));
 
