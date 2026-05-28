@@ -55,6 +55,7 @@ class PluginView extends ItemView {
 		// Controls panel (starts hidden; lives as a sibling of the cy container)
 		this.controlsPanel = new GraphControlsPanel(wrapper, {
 			onFilterChange: (query) => this.renderer?.setFilter(query),
+			plugin: this.plugin,
 		});
 
 		this.registerEvents();
