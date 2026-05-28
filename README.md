@@ -24,7 +24,7 @@ This plugin trades some of the "organic" look for **predictable, reproducible** 
 - Auto-refreshes when files are created, deleted, or renamed.
 - Refits the graph when the view becomes active again.
 - Respects Obsidian's **Files & links → Excluded files** (`userIgnoreFilters`) and re-renders when they change.
-- Customizable node and edge colors via the settings tab.
+- Customizable node and edge colors via the in-graph controls panel.
 - Single **network** ribbon icon to open the graph in a new tab.
 
 ## Installation
@@ -58,15 +58,14 @@ The graph rebuilds automatically when notes are created, deleted, or renamed, an
 
 ## Settings
 
-**Settings → Deterministic Graph View** exposes:
+Click the **gear icon** (top-right of the graph view) to open the controls panel. Expand the **Display** section to access:
 
 - **Node background color**
 - **Node text color**
 - **Edge color**
+- **↺ Reset to defaults** — restores all colors to the active theme's values
 
-Defaults use a "Deep Ocean Blue / Soft Light Gray / Slate Teal" palette (see `src/constants.ts`).
-
-> Note: settings changes apply on the next render (e.g. after creating/renaming a note, or reopening the view).
+Color changes apply immediately (~250 ms debounce). Defaults follow the active Obsidian theme via CSS variables (`--graph-node`, `--graph-line`, `--text-muted`).
 
 ## Development
 
@@ -85,12 +84,13 @@ For local testing, symlink or copy this folder into `<Vault>/.obsidian/plugins/d
 
 ```
 src/
-  main.ts            # plugin lifecycle: load settings, register view + setting tab, ribbon icon
-  PluginView.ts      # ItemView wrapper: lifecycle, vault/workspace events, render scheduling
-  GraphRenderer.ts   # Cytoscape instance, graph build, styling, node interactions
-  SettingTab.ts      # color-picker based settings UI
-  constants.ts       # default settings + color palette
-  utils.ts           # small helpers (e.g. darkenHexColor)
+  main.ts                # plugin lifecycle: load settings, register view, ribbon icon
+  PluginView.ts          # ItemView wrapper: lifecycle, vault/workspace events, render scheduling
+  GraphRenderer.ts       # Cytoscape instance, graph build, styling, node interactions
+  GraphControlsPanel.ts  # floating controls panel: filters + display (color) settings
+  SettingsManager.ts     # settings persistence and theme-color resolution
+  constants.ts           # default color palette + event names
+  utils.ts               # small helpers (e.g. darkenHexColor)
 types/
   PluginSettings.ts  # PluginSettings interface (node + edge colors)
 ```
